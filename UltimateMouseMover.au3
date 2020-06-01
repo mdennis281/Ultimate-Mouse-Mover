@@ -3,7 +3,7 @@
 ;       Title: Ultimate Mouse Mover
 ;        Desc:
 ;			This program moves your mouse in an unpredictable manner
-;           to simulate user activity. The following paramaters are
+;           to simulating user activity. The following paramaters are
 ;			random, and configurable: 
 ;					Mouse Position Range (min/max,x/y)
 ;					Mouse Movement Speed (min/max)
