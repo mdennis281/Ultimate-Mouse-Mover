@@ -4,7 +4,7 @@
 ;        Desc:
 ;			This program moves your mouse in an unpredictable manner
 ;           to simulating user activity. The following paramaters are
-;			random, and configurable: 
+;			random, and configurable:
 ;					Mouse Position Range (min/max,x/y)
 ;					Mouse Movement Speed (min/max)
 ;					Movement Delay (Min/Max)
@@ -38,6 +38,11 @@ $MOVE_DELAY_MAX = 1000
 ;Defines the state of the program
 $isRunning = True
 
+;Amount of time to pass before determining no user activity
+$OVERRIDE_SLEEP = 60000 ;ms
+
+;Override Sound - plays if user moves mouse while script is running
+$OVERRIDE_SOUND = "C:\Windows\Media\chord.wav"
 
 ;-------------------------------
 ;          HOTKEYS
@@ -55,12 +60,26 @@ HotKeySet("{esc}","killProgram")
 ;Main looping part of the program
 Func main()
 	Sleep($START_DELAY)
+	$x = 0
+	$y = 0
 	; loops until isRunning == False
 	While $isRunning
-		Sleep(Random ( $MOVE_DELAY_MIN,$MOVE_DELAY_MAX )) 
-		MM(Random ( $X_MIN,$X_MAX ),Random ( $Y_MIN,$Y_MAX ))
+
+		$x = Int(Random ( $X_MIN,$X_MAX ))
+		$y = Int(Random ( $Y_MIN,$Y_MAX ))
+		MM($x,$y)
+		Sleep(Random ( $MOVE_DELAY_MIN,$MOVE_DELAY_MAX ))
+		If Not isMouseAtCoords($x,$y) Then
+		   SoundPlay($OVERRIDE_SOUND)
+		   While Not isMouseAtCoords($x,$y)
+			  $mousePos = MouseGetPos()
+			  $x = $mousePos[0]
+			  $y = $mousePos[1]
+			  Sleep($OVERRIDE_SLEEP)
+		   WEnd
+		EndIf
 	WEnd
-	
+
 EndFunc
 
 ;function to set global var $isRunning to False (killing the program)
@@ -72,6 +91,17 @@ EndFunc
 ; At random speed
 Func MM($x,$y)
 	MouseMove ($x,$y,Random($MIN_MOUSE_SPEED,$MAX_MOUSE_SPEED));
+EndFunc
+
+Func isMouseAtCoords($x,$y)
+   $mousePos = MouseGetPos()
+
+   If $x == $mousePos[0] Then
+	  If $y == $mousePos[1] Then
+		 Return True
+	  EndIf
+   EndIf
+   Return False
 EndFunc
 
 main()
