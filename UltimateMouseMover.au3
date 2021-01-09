@@ -1,4 +1,5 @@
 #include <Constants.au3>
+#include <WinAPISys.au3>
 
 ;       Title: Ultimate Mouse Mover
 ;        Desc:
@@ -70,7 +71,9 @@ Func main()
 		MM($x,$y)
 		Sleep(Random ( $MOVE_DELAY_MIN,$MOVE_DELAY_MAX ))
 		If Not isMouseAtCoords($x,$y) Then
-		   SoundPlay($OVERRIDE_SOUND)
+		   If Not isWindowsLocked() Then 
+		      SoundPlay($OVERRIDE_SOUND) 
+		   EndIf
 		   While Not isMouseAtCoords($x,$y)
 			  $mousePos = MouseGetPos()
 			  $x = $mousePos[0]
@@ -102,6 +105,12 @@ Func isMouseAtCoords($x,$y)
 	  EndIf
    EndIf
    Return False
+EndFunc
+
+
+Func isWindowsLocked()
+    If _WinAPI_OpenInputDesktop() Then Return False
+    Return True
 EndFunc
 
 main()
